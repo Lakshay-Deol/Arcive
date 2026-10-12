@@ -1,0 +1,81 @@
+export const ARCIVE_ABI = [
+  {
+    inputs: [{ internalType: "address", name: "usdcAddress", type: "address" }],
+    stateMutability: "nonpayable",
+    type: "constructor",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: "uint256", name: "id", type: "uint256" },
+      { indexed: true, internalType: "address", name: "payer", type: "address" },
+      { indexed: true, internalType: "address", name: "payee", type: "address" },
+      { indexed: false, internalType: "uint256", name: "amount", type: "uint256" },
+      { indexed: false, internalType: "string", name: "category", type: "string" },
+      { indexed: false, internalType: "string", name: "note", type: "string" },
+    ],
+    name: "Paid",
+    type: "event",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "payee", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "string", name: "category", type: "string" },
+      { internalType: "string", name: "note", type: "string" },
+    ],
+    name: "pay",
+    outputs: [{ internalType: "uint256", name: "id", type: "uint256" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "uint256", name: "id", type: "uint256" }],
+    name: "getReceipt",
+    outputs: [
+      {
+        components: [
+          { internalType: "address", name: "payer", type: "address" },
+          { internalType: "address", name: "payee", type: "address" },
+          { internalType: "uint256", name: "amount", type: "uint256" },
+          { internalType: "string", name: "category", type: "string" },
+          { internalType: "string", name: "note", type: "string" },
+          { internalType: "uint64", name: "timestamp", type: "uint64" },
+        ],
+        internalType: "struct Arcive.Receipt",
+        name: "",
+        type: "tuple",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "a", type: "address" }],
+    name: "idsByPayer",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [{ internalType: "address", name: "a", type: "address" }],
+    name: "idsByPayee",
+    outputs: [{ internalType: "uint256[]", name: "", type: "uint256[]" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "totalReceipts",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "usdc",
+    outputs: [{ internalType: "contract IERC20", name: "", type: "address" }],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
