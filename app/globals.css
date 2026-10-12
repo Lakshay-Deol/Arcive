@@ -1,39 +1,38 @@
 @import "tailwindcss";
 
 :root {
-  --bg-sage: #c8d5b9;
-  --text-dark: #0f1712;
-  --card-cream: #faf8f0;
-  --accent-coral: #e75a3c;
-  --accent-mint: #4ade80;
-  --accent-gold: #eab308;
+  --bg-yellow: #f8ef88;
+  --bg-card-blue: #a5d8ff;
+  --bg-card-green: #9ae6b4;
+  --bg-card-pink: #fbb6ce;
+  --bg-dark: #0f1423;
+  --border-black: #111111;
 }
 
 body {
-  background-color: #c8d5b9;
-  color: #0f1712;
+  background-color: var(--bg-yellow);
+  color: #111111;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Neo-Brutalist utility classes with earthy/sage palette */
+/* Neo-Brutalist utility classes */
 .neo-box {
-  background-color: #faf8f0;
-  border: 3px solid #0f1712;
-  box-shadow: 5px 5px 0px #0f1712;
+  background-color: #ffffff;
+  border: 3px solid #111111;
+  box-shadow: 5px 5px 0px #111111;
   transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 
 .neo-box:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 7px 7px 0px #0f1712;
+  box-shadow: 7px 7px 0px #111111;
 }
 
 .neo-btn {
-  background-color: #e75a3c;
-  color: #0f1712;
-  border: 3px solid #0f1712;
-  box-shadow: 4px 4px 0px #0f1712;
+  background-color: #fef08a;
+  border: 3px solid #111111;
+  box-shadow: 4px 4px 0px #111111;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -42,43 +41,50 @@ body {
 }
 
 .neo-btn:hover {
-  background-color: #f06c50;
+  background-color: #fde047;
   transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0px #0f1712;
+  box-shadow: 6px 6px 0px #111111;
 }
 
 .neo-btn:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px #0f1712;
+  box-shadow: 2px 2px 0px #111111;
 }
 
 .neo-badge {
   display: inline-block;
   padding: 3px 10px;
-  border: 2px solid #0f1712;
-  box-shadow: 2px 2px 0px #0f1712;
+  border: 2px solid #111111;
+  box-shadow: 2px 2px 0px #111111;
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-.neo-badge-coral {
-  background-color: #e75a3c;
-  color: #0f1712;
+.neo-badge-pink {
+  background-color: #f472b6;
+  color: #111111;
 }
 
 .neo-badge-black {
-  background-color: #0f1712;
-  color: #faf8f0;
+  background-color: #111111;
+  color: #ffffff;
 }
 
-.neo-badge-mint {
-  background-color: #4ade80;
-  color: #0f1712;
+.neo-badge-green {
+  background-color: #86efac;
+  color: #111111;
 }
 
-.neo-badge-gold {
-  background-color: #eab308;
-  color: #0f1712;
+.neo-badge-blue {
+  background-color: #93c5fd;
+  color: #111111;
+}
+
+.neo-title {
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: #111111;
 }

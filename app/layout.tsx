@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-[#c8d5b9] text-[#0f1712] antialiased">
+      <body className="min-h-screen bg-[#f8ef88] text-[#111111] antialiased">
         <Web3Providers>
           <div className="min-h-screen flex flex-col">
             <Sidebar />
