@@ -56,7 +56,7 @@ export default function Sidebar() {
         <div className="flex items-center gap-3">
           <Link
             href="/create"
-            className="hidden sm:inline-flex items-center gap-1.5 bg-white border-2 border-[#111111] shadow-[3px_3px_0px_#111111] px-4 py-2 text-xs font-black uppercase hover:bg-yellow-200 transition-all active:translate-x-0.5 active:translate-y-0.5"
+            className="hidden sm:inline-flex items-center gap-1.5 bg-[#f43f5e] border-3 border-[#111111] shadow-[3px_3px_0px_#111111] px-4 py-2 text-xs font-black uppercase text-[#111111] hover:bg-[#fb7185] transition-all active:translate-x-0.5 active:translate-y-0.5"
           >
             <span>NEW RECEIPT</span>
             <span className="font-bold">↗</span>

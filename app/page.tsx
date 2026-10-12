@@ -12,10 +12,10 @@ export default function HomePage() {
     <div className="space-y-12">
       {/* Top Banner Tags */}
       <div className="flex flex-wrap items-center gap-3">
-        <span className="neo-badge neo-badge-pink">
+        <span className="neo-badge bg-[#c026d3] text-white border-3 border-[#111111] shadow-[3px_3px_0px_#111111]">
           ONE REPORT. CONNECTED CONTEXT.
         </span>
-        <span className="neo-badge neo-badge-black">
+        <span className="neo-badge neo-badge-black border-3 border-[#111111] shadow-[3px_3px_0px_#111111]">
           ARC NETWORK MAINNET & TESTNET
         </span>
       </div>
@@ -41,7 +41,7 @@ export default function HomePage() {
           <div className="pt-4 flex flex-wrap items-center gap-4">
             <Link
               href="/create"
-              className="neo-btn px-6 py-4 text-base md:text-lg flex items-center gap-2"
+              className="bg-[#f43f5e] border-4 border-[#111111] shadow-[6px_6px_0px_#111111] px-6 py-4 text-base md:text-lg font-black uppercase text-[#111111] flex items-center gap-2 hover:bg-[#fb7185] transition-all active:translate-x-0.5 active:translate-y-0.5"
             >
               <span>SEND VERIFIED PAYMENT</span>
               <span className="text-xl">↗</span>
@@ -49,7 +49,7 @@ export default function HomePage() {
 
             <Link
               href="/history"
-              className="bg-white border-3 border-[#111111] shadow-[4px_4px_0px_#111111] px-6 py-4 text-sm font-black uppercase hover:bg-slate-100 transition-all active:translate-x-0.5 active:translate-y-0.5"
+              className="bg-white border-4 border-[#111111] shadow-[6px_6px_0px_#111111] px-6 py-4 text-sm font-black uppercase hover:bg-slate-100 transition-all active:translate-x-0.5 active:translate-y-0.5"
             >
               EXPLORE THE RECORDED TRAIL
             </Link>
@@ -64,15 +64,15 @@ export default function HomePage() {
         {/* Right Cards Area */}
         <div className="lg:col-span-5 space-y-6">
           {/* Candidate / Verification Report Card */}
-          <div className="neo-box p-6 bg-[#a5d8ff] border-4 border-[#111111] shadow-[8px_8px_0px_#111111]">
+          <div className="neo-box p-6 bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111]">
             <div className="flex items-center justify-between pb-3 border-b-2 border-[#111111] mb-4">
               <span className="neo-badge neo-badge-black text-[10px]">THE ARCIVE STANDARD</span>
-              <span className="neo-badge neo-badge-green text-[10px]">VERIFIED</span>
+              <span className="neo-badge bg-[#10b981] text-white text-[10px]">VERIFIED</span>
             </div>
             <h3 className="text-lg font-black text-[#111111] uppercase leading-tight">
               Single-transaction settlement without trusted owner keys.
             </h3>
-            <p className="text-xs font-bold text-[#111111] mt-2 uppercase tracking-wide">
+            <p className="text-xs font-bold text-[#666666] mt-2 uppercase tracking-wide">
               REPORT SUMMARY, SYNTHESIZED FOR LENDER & AUDITOR REVIEW
             </p>
           </div>
@@ -80,8 +80,8 @@ export default function HomePage() {
           {/* Recorded Result Box */}
           <div className="neo-box p-6 bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] space-y-4">
             <div className="flex items-center justify-between pb-3 border-b-2 border-[#111111]">
-              <span className="neo-badge neo-badge-green text-[10px]">RECORDED RESULT</span>
-              <span className="neo-badge bg-[#fef08a] text-[10px]">READ BACK ✓</span>
+              <span className="neo-badge bg-[#34d399] text-[#111111] text-[10px]">RECORDED RESULT</span>
+              <span className="neo-badge bg-white text-[#111111] text-[10px]">READ BACK ✓</span>
             </div>
 
             <h2 className="text-xl font-black text-[#111111] uppercase tracking-tight">
@@ -91,19 +91,19 @@ export default function HomePage() {
             <div className="space-y-3 text-xs font-bold divide-y-2 divide-[#111111]/10">
               <div className="flex justify-between items-center pt-2">
                 <span className="text-[#111111]">Invoice #1042 — Engineering Deliverable</span>
-                <span className="neo-badge bg-[#e0e7ff] text-[10px]">500.00 USDC</span>
+                <span className="neo-badge bg-[#06b6d4] text-[#111111] text-[10px]">500.00 USDC</span>
               </div>
               <div className="flex justify-between items-center pt-2">
                 <span className="text-[#111111]">Salary Disbursal — Q3 Core Ops</span>
-                <span className="neo-badge bg-[#dcfce7] text-[10px]">1,250.00 USDC</span>
+                <span className="neo-badge bg-[#06b6d4] text-[#111111] text-[10px]">1,250.00 USDC</span>
               </div>
               <div className="flex justify-between items-center pt-2">
                 <span className="text-[#111111]">Grant Escrow — Verification Hash</span>
-                <span className="neo-badge bg-[#fef9c3] text-[10px]">Permanent</span>
+                <span className="neo-badge bg-[#06b6d4] text-[#111111] text-[10px]">PERMANENT</span>
               </div>
             </div>
 
-            <div className="mt-4 p-3 bg-[#fbb6ce] border-2 border-[#111111] text-xs font-black uppercase text-[#111111]">
+            <div className="mt-4 p-3 bg-[#e879f9] border-3 border-[#111111] text-xs font-black uppercase text-[#111111] shadow-[3px_3px_0px_#111111]">
               Non-repudiable: Immutable metadata stamped in EVM block header.
             </div>
           </div>
