@@ -43,31 +43,71 @@ async function main() {
   const publicClient = createPublicClient({ chain, transport: http(rpcUrl) });
   const walletClient = createWalletClient({ account, chain, transport: http(rpcUrl) });
 
-  // Pre-flight balance check
-  try {
-    const balance = await publicClient.getBalance({ address: account.address });
-    console.log('Deployer Native Balance:', formatUnits(balance, 18), 'USDC');
-
-    if (balance === 0n) {
-      console.warn('\n⚠️ WARNING: Deployer balance is 0 USDC. Ensure wallet has sufficient gas funds.');
-    }
-  } catch (balanceErr) {
-    console.warn('Notice: Could not fetch balance prior to broadcast (RPC node may require direct transaction submission).', balanceErr.message);
+  // 1. Verify RPC Chain ID
+  const networkChainId = await publicClient.getChainId();
+  if (networkChainId !== chainId) {
+    console.error(`\n❌ Error: Connected RPC reports Chain ID ${networkChainId}, but expected ${chainId}.`);
+    console.error('Aborting deployment to protect against wrong network broadcast.');
+    process.exit(1);
   }
 
+  // 2. Load compiled artifact
   const artifactPath = path.resolve(__dirname, '../out/ArciveNFT.sol/ArciveNFT.json');
   if (!fs.existsSync(artifactPath)) {
-    console.error('\nError: Artifact not found at', artifactPath);
+    console.error('\n❌ Error: Artifact not found at', artifactPath);
     console.error('Run: npm run compile first.');
     process.exit(1);
   }
 
   const artifact = JSON.parse(fs.readFileSync(artifactPath, 'utf8'));
 
+  // 3. Pre-flight gas estimation and balance check
+  const deployData = `0x${artifact.bytecode.object}`;
+  let estimatedGas;
+  let gasPrice;
+  let estimatedCost = 0n;
+
+  try {
+    const { encodeDeployData } = require('viem');
+    const fullData = encodeDeployData({
+      abi: artifact.abi,
+      bytecode: deployData,
+      args: [usdcAddress],
+    });
+
+    [estimatedGas, gasPrice] = await Promise.all([
+      publicClient.estimateGas({ data: fullData, account: account.address }),
+      publicClient.getGasPrice(),
+    ]);
+
+    estimatedCost = estimatedGas * gasPrice;
+    console.log('Estimated Deployment Gas :', estimatedGas.toString(), 'units');
+    console.log('Estimated Cost (Gas Fee) :', formatUnits(estimatedCost, 18), 'USDC');
+  } catch (estErr) {
+    console.warn('Notice: Could not pre-estimate gas accurately:', estErr.message);
+  }
+
+  const balance = await publicClient.getBalance({ address: account.address });
+  console.log('Deployer Native Balance  :', formatUnits(balance, 18), 'USDC');
+
+  if (estimatedCost > 0n && balance < estimatedCost) {
+    console.error('\n❌ Error: Insufficient native USDC balance for deployment.');
+    console.error(`   Required Gas Cost: ${formatUnits(estimatedCost, 18)} USDC`);
+    console.error(`   Current Balance  : ${formatUnits(balance, 18)} USDC`);
+    console.error('\nPlease fund your wallet with native USDC before attempting deployment.');
+    console.error('Run "npm run estimate-gas" for detailed funding recommendations.');
+    process.exit(1);
+  }
+
+  if (balance === 0n) {
+    console.error('\n❌ Error: Deployer balance is 0 USDC. Deployment cannot proceed without gas funds.');
+    process.exit(1);
+  }
+
   console.log('\nBroadcasting ArciveNFT deployment transaction to Arc Mainnet...');
   const hash = await walletClient.deployContract({
     abi: artifact.abi,
-    bytecode: `0x${artifact.bytecode.object}`,
+    bytecode: deployData,
     args: [usdcAddress],
   });
 

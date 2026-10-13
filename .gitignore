@@ -22,10 +22,15 @@ pnpm-debug.log*
 .DS_Store
 Thumbs.db
 
-# env files (Never commit secrets)
+# env files & secrets (Never commit private keys or environment secrets)
 .env
 .env*
 !.env.example
+*.pem
+*.key
+*private_key*
+*private-key*
+*secret*
 
 # vercel
 .vercel/

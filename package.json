@@ -9,6 +9,7 @@
     "lint": "eslint",
     "compile": "node scripts/compile-arcive.js && node scripts/compile-arcive-nft.js",
     "compile:nft": "node scripts/compile-arcive-nft.js",
+    "estimate-gas": "node scripts/estimate-gas.js",
     "deploy:mainnet": "node scripts/deploy-arcive-nft.js",
     "deploy": "node scripts/deploy-arcive-nft.js"
   },
