@@ -1,134 +1,199 @@
 # Arcive 📜
 
-> **Permanent, verifiable on-chain receipts and NFT proofs for every USDC payment on Arc Mainnet.**
+**Permanent, verifiable on-chain receipts and NFT proofs for every USDC payment on Arc Mainnet.**
 
-🔗 **Live Production App**: [https://arcive-delta.vercel.app](https://arcive-delta.vercel.app)  
-📜 **Verified Arc Mainnet Contract**: [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f)  
-🔍 **Deployment Transaction**: [`0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992`](https://explorer.arc.io/tx/0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992)
+<!-- 📸 MAIN SHOWCASE IMAGE: save your image as public/showcase.png (recommended 1600x900) -->
+<p align="center">
+  <img src="./public/showcase.png" alt="Arcive: on-chain receipts and NFT proofs for USDC payments on Arc" width="100%" />
+</p>
 
-Arcive gives every USDC transaction on Arc Mainnet a permanent on-chain receipt (amount, counterparty, category, reference note), an interactive filterable history ledger, mintable on-chain SVG NFT certificates, and an accountant-ready CSV export in one click.
+[![Arc Mainnet](https://img.shields.io/badge/network-Arc%20Mainnet-1f6feb)](https://explorer.arc.io)
+[![Chain ID](https://img.shields.io/badge/chain%20ID-5042-informational)](#-arc-mainnet-parameters)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](./LICENSE)
+
+| | |
+|---|---|
+| 🔗 **Live app** | <https://arcive-delta.vercel.app> |
+| 📜 **Contract** | [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f) |
+| 🔍 **Deployment tx** | [`0x988bec74…c0c992`](https://explorer.arc.io/tx/0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992) |
+| 🎬 **Demo video** | [Watch on YouTube](https://www.youtube.com/watch?v=YOUR_VIDEO_ID) |
+
+### 🎬 Demo
+
+<!-- 🎥 YOUTUBE DEMO: replace YOUR_VIDEO_ID (the part after v= in the video URL) in both places below -->
+[![Watch the Arcive demo on YouTube](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
 
 ---
 
-## ⚡ How It Uses Arc Network
-- **Native USDC Gas & Payment:** Arcive leverages Arc's native USDC architecture—users pay for transactions and gas seamlessly in USDC without needing a secondary token.
-- **Single-Transaction Execution:** In `ArciveNFT.sol`, payments, on-chain receipt recordings, and ERC-721 certificate minting happen atomically in a single transaction via `pay()`.
-- **Verifiable Proof of Payment:** Each receipt is queryable on-chain, verifiable via ArcScan explorer, and inspectable as on-chain SVG image data.
+## What is Arcive?
+
+A normal USDC transfer tells you *who paid whom and how much*. It doesn't tell you **why**. Arcive adds the missing context.
+
+Every payment sent through Arcive is recorded on-chain with the counterparty, amount, a category (Invoice, Salary, Subscription, Loan repayment, and more) and a short reference note. In the same transaction, the payer receives an **ERC-721 certificate** whose artwork is an SVG generated entirely on-chain.
+
+On top of that sits an app with a filterable ledger and a one-click, accountant-ready CSV export, so the payment history is useful for bookkeeping.
+
+**Who it's for:** freelancers, small teams, DAOs, and anyone who needs clean, verifiable payment records without a spreadsheet and a screenshot folder.
+
+---
+
+## ⚡ How Arcive uses Arc
+
+- **Native USDC for payment and gas.** Users pay for the transfer and for gas in USDC. There is no second token to acquire first.
+- **One atomic transaction.** A single `pay()` call in `ArciveNFT.sol` transfers the USDC, stores the receipt, and mints the NFT. Either all of it happens or none of it does.
+- **Verifiable by anyone.** Receipts are readable directly from the contract (`getReceipt`), inspectable on the Arc explorer, and the certificate image is embedded in `tokenURI` as base64 SVG, with no external hosting or IPFS dependency.
 
 ---
 
 ## 🚀 Features
 
-- **Dashboard & Quick Send:** Instant balance overview, recent payment feed, and interactive payment creator.
-- **Structured Payment Metadata:** Record counterparty, category (Invoice, Salary, Test Purchase, Subscription, Loan repayment, etc.), and reference notes up to 140 characters.
-- **Permanent Receipts (`/receipt/[id]`):** Immutable receipt page with direct transaction explorer verification and image export.
-- **Filterable History (`/history`):** Filter by direction (Sent / Received), category, and date range.
-- **Accountant-Ready CSV Export:**
-  - One-click export with ISO timestamps and 6-decimal USDC precision.
-  - Full defense against formula injection (`=`, `+`, `-`, `@` safely escaped).
-  - Excel-compatible UTF-8 BOM encoding.
-- **NFT Receipts Gallery (`/gallery`):**
-  - Mintable proof-of-payment ERC-721 certificates on Arc Mainnet.
-  - On-chain SVG graphics rendered directly from `tokenURI` base64 metadata.
-  - "Add to Wallet" EIP-747 integration for MetaMask and Rainbow.
-  - Direct ArcScan Explorer contract and token inspection.
+**Payments**
+- Dashboard with balance overview, recent payment feed, and a quick-send form
+- Structured metadata: counterparty, category, and a reference note of up to 140 characters
+
+**Receipts**
+- Permanent receipt page at `/receipt/[id]` with explorer verification and image export
+
+**History**
+- `/history` ledger filterable by direction (sent or received), category, and date range
+
+**CSV export**
+- One-click export with ISO timestamps and 6-decimal USDC precision
+- Protected against spreadsheet formula injection (cells beginning with `=`, `+`, `-`, or `@` are escaped)
+- UTF-8 BOM so the file opens correctly in Excel
+
+**NFT gallery**
+- `/gallery` shows mintable proof-of-payment ERC-721 certificates
+- On-chain SVG rendered straight from `tokenURI` metadata
+- "Add to Wallet" support via EIP-747 for MetaMask and Rainbow
+- Direct links to contract and token pages on the explorer
 
 ---
 
-## 📦 Smart Contract Architecture
+## 🧱 Architecture
 
-### `ArciveNFT.sol` (ERC-721 Proof of Payment)
-- `pay(address payee, uint256 amount, string category, string note)`: transfers USDC, records receipt, and mints an ERC-721 token directly to payer.
-- `tokenURI(uint256 tokenId)`: returns full JSON metadata with embedded on-chain SVG graphic.
-- `ownerOf(uint256 tokenId)`: returns current NFT owner address.
-- `getReceipt(uint256 id)`: returns `Receipt(payer, payee, amount, category, note, timestamp)`.
-- `idsByPayer(address a)` / `idsByPayee(address a)`: instant indexer arrays for counterparties.
-- `totalReceipts()`: returns total receipts counter.
+```
+Arcive/
+├── app/         Next.js app router pages (dashboard, history, receipt, gallery)
+├── contracts/   ArciveNFT.sol
+├── lib/         Chain config, contract bindings, helpers
+├── scripts/     Compile and deploy scripts
+└── public/      Static assets
+```
+
+**Stack:** Next.js, TypeScript, wagmi + viem, Solidity, Hardhat.
+
+### `ArciveNFT.sol`
+
+| Function | Purpose |
+|---|---|
+| `pay(address payee, uint256 amount, string category, string note)` | Transfers USDC to `payee`, records the receipt, and mints an ERC-721 certificate to the payer |
+| `getReceipt(uint256 id)` | Returns `Receipt(payer, payee, amount, category, note, timestamp)` |
+| `idsByPayer(address)` / `idsByPayee(address)` | Receipt IDs for an address, so no off-chain indexer is needed |
+| `totalReceipts()` | Total number of receipts recorded |
+| `tokenURI(uint256 tokenId)` | JSON metadata with the embedded on-chain SVG |
+| `ownerOf(uint256 tokenId)` | Current owner of a certificate |
 
 ---
 
-## 🌐 Arc Mainnet Network Parameters & Deployed Contract
+## 🌐 Arc Mainnet parameters
 
-| Parameter | Specification |
-| :--- | :--- |
-| **Chain ID** | `5042` |
-| **Network Name** | Arc Mainnet |
-| **RPC Endpoint** | `https://rpc.mainnet.arc.io` |
-| **Native Gas Currency** | `USDC` (18 decimals) |
-| **Official USDC Token** | `0x3600000000000000000000000000000000000000` |
-| **ArciveNFT Deployed Contract** | [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f) |
-| **Deployment Transaction** | [`0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992`](https://explorer.arc.io/tx/0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992) |
-| **Block Explorer** | [https://explorer.arc.io](https://explorer.arc.io) |
+| Parameter | Value |
+|---|---|
+| Network | Arc Mainnet |
+| Chain ID | `5042` |
+| RPC | `https://rpc.mainnet.arc.io` |
+| Gas currency | USDC (18 decimals) |
+| USDC token | `0x3600000000000000000000000000000000000000` |
+| Block explorer | <https://explorer.arc.io> |
 
 ---
 
-## 🛠️ Local Development & Deployment
+## 🛠️ Getting started
 
-### 1. Prerequisites
+### Prerequisites
 - Node.js 18+
 - npm or pnpm
+- A wallet with a small amount of USDC on Arc (needed for gas)
 
-### 2. Setup
+### Install and run
+
 ```bash
 git clone https://github.com/Lakshay-Deol/Arcive.git
 cd Arcive
 npm install
-```
-
-### 3. Compile Contracts
-Compile contracts using the standalone solc dependency resolver:
-```bash
-npm run compile
-```
-
-### 4. Deploy to Arc Mainnet (Zero-Secret Policy)
-To deploy without ever saving or exposing private keys:
-
-```powershell
-$env:DEPLOYER_PRIVATE_KEY="0xYOUR_MAINNET_PRIVATE_KEY"
-npm run deploy:mainnet
-```
-
-*The deployment script will automatically broadcast the contract, check balance, verify receipt, and update `.env.local`.*
-
-### 5. Run Development Server
-```bash
+cp .env.example .env.local
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-### 6. Production Build
-```bash
-npm run build
-```
+Open <http://localhost:3000>.
 
----
-
-## 🚀 Vercel Production Deployment Environment
-
-Set the following environment variables in your Vercel project settings:
+### Environment variables
 
 ```env
 NEXT_PUBLIC_CHAIN_ID=5042
 NEXT_PUBLIC_RPC_URL=https://rpc.mainnet.arc.io
-NEXT_PUBLIC_ARCIVE_NFT_CONTRACT=<YOUR_DEPLOYED_MAINNET_CONTRACT_ADDRESS>
-NEXT_PUBLIC_ARCIVE_CONTRACT=<YOUR_DEPLOYED_MAINNET_CONTRACT_ADDRESS>
+NEXT_PUBLIC_ARCIVE_NFT_CONTRACT=<deployed contract address>
+NEXT_PUBLIC_ARCIVE_CONTRACT=<deployed contract address>
 NEXT_PUBLIC_USDC_ADDRESS=0x3600000000000000000000000000000000000000
 NEXT_PUBLIC_EXPLORER_URL=https://explorer.arc.io
 ```
 
+### Compile contracts
+
+```bash
+npm run compile
+```
+
+### Deploy your own instance
+
+The deploy script reads the key from an environment variable at run time. Never commit it.
+
+```bash
+# macOS / Linux
+DEPLOYER_PRIVATE_KEY=0xYOUR_KEY npm run deploy:mainnet
+```
+
+```powershell
+# Windows PowerShell
+$env:DEPLOYER_PRIVATE_KEY="0xYOUR_KEY"
+npm run deploy:mainnet
+```
+
+The script broadcasts the contract, checks the balance, verifies the receipt, and updates `.env.local` with the new address.
+
+### Production build
+
+```bash
+npm run build
+```
+
+Deployed on Vercel. Set the environment variables above in your project settings.
+
 ---
 
-## 🗺️ Roadmap
-- [x] Atomically recorded receipts via `ArciveNFT.sol`
-- [x] Formula-safe CSV export for bookkeeping
-- [x] Arc Mainnet viem/wagmi integration (Chain ID 5042)
-- [x] NFT Receipt badges & Gallery with on-chain SVG rendering
-- [x] Wallet watch asset integration (EIP-747)
-- [ ] Off-chain encrypted notes for confidential payroll
-- [ ] Payer-initiated payment request / invoicing links
+## 🔐 Security and limitations
+
+Arcive is an early-stage project built to prove the concept on Arc mainnet. Please read this before using it with real funds.
+
+- **Receipt notes are public.** Categories and notes are stored on-chain in plaintext, so anyone can read them. Don't put confidential information in a note.
+- **Not audited.** The contract has not had a third-party security audit. Use it at your own risk and with amounts you're comfortable with.
+- **Certificates go to the payer.** The ERC-721 proof is minted to the sender. The payee can still look up the receipt on-chain through `idsByPayee`.
+- **Arc network risk.** Arc is a new network, and its own disclosures apply to anything built on it.
+
+Found a vulnerability? Please open a GitHub issue or contact the maintainer privately before disclosing it publicly.
 
 ---
+
+
+## 🤝 Contributing
+
+Issues and pull requests are welcome. For larger changes, please open an issue first to discuss what you'd like to change.
 
 ## 📄 License
-MIT
+
+[MIT](./LICENSE) © Lakshay Deol
+
+---
+
+*Built for Arc. Every payment, on the record.*
