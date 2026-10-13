@@ -20,8 +20,8 @@ export default function Sidebar() {
         {/* LOGO */}
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="bg-[#111111] text-[#f8ef88] font-black text-2xl w-10 h-10 flex items-center justify-center border-2 border-[#111111] shadow-[3px_3px_0px_#111111]">
-              A
+            <div className="relative bg-[#0d0f17] w-10 h-10 flex items-center justify-center border-2 border-[#111111] shadow-[3px_3px_0px_#111111] overflow-hidden group-hover:scale-105 transition-transform rounded-sm">
+              <img src="/arc-logo.png" alt="Arcive Logo" className="w-full h-full object-cover" />
             </div>
             <div className="flex items-baseline gap-1">
               <span className="font-black text-2xl tracking-tighter text-[#111111]">
