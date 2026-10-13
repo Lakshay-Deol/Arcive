@@ -1,0 +1,16 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NEXT_USE_NETLIFY_EDGE = "false"
+  NEXT_PUBLIC_CHAIN_ID = "5042"
+  NEXT_PUBLIC_RPC_URL = "https://rpc.mainnet.arc.io"
+  NEXT_PUBLIC_ARCIVE_NFT_CONTRACT = "0x4664cf917157735081c3ba095733a85ade5beb0f"
+  NEXT_PUBLIC_ARCIVE_CONTRACT = "0x4664cf917157735081c3ba095733a85ade5beb0f"
+  NEXT_PUBLIC_USDC_ADDRESS = "0x3600000000000000000000000000000000000000"
+  NEXT_PUBLIC_EXPLORER_URL = "https://explorer.arc.io"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
