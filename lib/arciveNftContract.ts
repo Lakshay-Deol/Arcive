@@ -1,6 +1,6 @@
 export const ARCIVE_NFT_ADDRESS = (process.env.NEXT_PUBLIC_ARCIVE_NFT_CONTRACT ||
   process.env.NEXT_PUBLIC_ARCIVE_CONTRACT ||
-  "") as `0x${string}`;
+  "0x4664cf917157735081c3ba095733a85ade5beb0f") as `0x${string}`;
 
 export const ARCIVE_NFT_ABI = [
   {

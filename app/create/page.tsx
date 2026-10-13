@@ -175,7 +175,7 @@ function CreateReceiptContent() {
     address: ARC_USDC_ADDRESS,
     abi: ARC_USDC_ABI,
     functionName: "allowance",
-    args: address ? [address, ARC_RECEIPTS_ADDRESS] : undefined,
+    args: address ? [address, ARCIVE_NFT_ADDRESS] : undefined,
     query: { enabled: !!address },
   } as any);
 
@@ -198,6 +198,7 @@ function CreateReceiptContent() {
   const [lastMyReceipt, setLastMyReceipt] = useState<Receipt | null>(null);
   const [lastMyReceiptLoading, setLastMyReceiptLoading] = useState(false);
   const [lastMyReceiptError, setLastMyReceiptError] = useState<string | null>(null);
+  const [actionStep, setActionStep] = useState<string | null>(null);
 
   useEffect(() => {
     if (!publicClient || !isConnected || !address) {
@@ -352,9 +353,15 @@ function CreateReceiptContent() {
   const { writeContractAsync: writeApproveAsync } = useWriteContract();
 
   useEffect(() => {
-    if (isPayConfirmed && expectedReceiptId) {
-      setIsFormOpen(false);
-      router.push(`/receipt/${expectedReceiptId}?tx=${payTxHash}`);
+    if (isPayConfirmed) {
+      setActionStep(null);
+      setSuccessMsg("Payment confirmed on Arc Mainnet! Loading receipt...");
+      const targetId = expectedReceiptId ?? "0";
+      const timer = setTimeout(() => {
+        setIsFormOpen(false);
+        router.push(`/receipt/${targetId}?tx=${payTxHash}`);
+      }, 1000);
+      return () => clearTimeout(timer);
     }
   }, [isPayConfirmed, expectedReceiptId, router, payTxHash]);
 
@@ -483,22 +490,24 @@ function CreateReceiptContent() {
     }
 
     try {
-      const spender = paymentMode === "swap" ? ARC_FX_ROUTER_ADDRESS : ARC_RECEIPTS_ADDRESS;
+      const spender = paymentMode === "swap" ? ARC_FX_ROUTER_ADDRESS : ARCIVE_NFT_ADDRESS;
 
       if (allowanceValue < usdcAmount) {
+        setActionStep("Step 1/2: Please approve USDC in your wallet...");
         const approveHash = await writeApproveAsync({
           address: ARC_USDC_ADDRESS,
           abi: ARC_USDC_ABI,
           functionName: "approve",
           args: [spender, usdcAmount],
         });
+        setActionStep("Step 1/2: Confirming USDC approval on Arc Mainnet...");
         await publicClient.waitForTransactionReceipt({ hash: approveHash as `0x${string}` });
 
         if (paymentMode === "swap") refetchAllowanceRouter();
         else refetchAllowanceDirect();
       }
 
-      let nextIdVal = "1";
+      let nextIdVal = "0";
       try {
         const nextId = (await publicClient.readContract({
           address: ARCIVE_NFT_ADDRESS,
@@ -507,53 +516,22 @@ function CreateReceiptContent() {
         })) as bigint;
         nextIdVal = nextId.toString();
       } catch {
-        if (ARC_RECEIPTS_ADDRESS && ARC_RECEIPTS_ADDRESS !== ARCIVE_NFT_ADDRESS) {
-          try {
-            const nextId = (await publicClient.readContract({
-              address: ARC_RECEIPTS_ADDRESS,
-              abi: ARC_RECEIPTS_ABI,
-              functionName: "nextReceiptId",
-            })) as bigint;
-            nextIdVal = nextId.toString();
-          } catch {
-            nextIdVal = "1";
-          }
-        } else {
-          nextIdVal = "1";
-        }
+        nextIdVal = "0";
       }
       setExpectedReceiptId(nextIdVal);
 
       if (paymentMode === "direct") {
+        setActionStep("Step 2/2: Please confirm the payment & receipt minting in your wallet...");
         const categoryName = categories.find((c) => c.value === category)?.label || "Payment";
-        try {
-          await writePayAsync({
-            address: ARCIVE_NFT_ADDRESS,
-            abi: ARCIVE_NFT_ABI,
-            functionName: "pay",
-            args: [toAddress, usdcAmount, categoryName, reason || "Arcive Payment"],
-          });
-        } catch (nftErr: any) {
-          console.warn("NFT pay() call failed, trying payWithReceipt fallback...", nftErr);
-          await writePayAsync({
-            address: ARC_RECEIPTS_ADDRESS,
-            abi: ARC_RECEIPTS_ABI,
-            functionName: "payWithReceipt",
-            args: [
-              ARC_USDC_ADDRESS,
-              toAddress,
-              usdcAmount,
-              {
-                category: category,
-                reason: reason,
-                sourceCurrency: sourceCurrency,
-                destinationCurrency: destinationCurrency,
-                corridor: corridor,
-              },
-            ],
-          });
-        }
+        await writePayAsync({
+          address: ARCIVE_NFT_ADDRESS,
+          abi: ARCIVE_NFT_ABI,
+          functionName: "pay",
+          args: [toAddress, usdcAmount, categoryName, reason || "Arcive Payment"],
+        });
+        setActionStep("Broadcasting transaction to Arc Mainnet...");
       } else {
+        setActionStep("Step 2/2: Confirming swap & payment in your wallet...");
         await writePayAsync({
           address: ARC_FX_ROUTER_ADDRESS,
           abi: ARC_FX_ROUTER_ABI,
@@ -562,15 +540,16 @@ function CreateReceiptContent() {
             ARC_USDC_ADDRESS,
             targetTokenAddress as `0x${string}`,
             usdcAmount,
-            BigInt(0), // مؤقتاً لحين استبدال الروتر
+            BigInt(0),
             toAddress,
             category,
             reason,
             sourceCurrency,
             destinationCurrency,
-            corridor
+            corridor,
           ],
         });
+        setActionStep("Broadcasting swap & pay to Arc Mainnet...");
       }
 
     } catch (err: any) {
@@ -607,7 +586,7 @@ function CreateReceiptContent() {
                 {isSent ? "SENT OUT" : "RECEIVED"}
               </span>
               <span className="neo-badge neo-badge-black text-[10px]">
-                {categoryLabels[lastMyReceipt.category] || "Payment"}
+                {typeof lastMyReceipt.category === "string" ? lastMyReceipt.category : (categoryLabels[lastMyReceipt.category] || "Payment")}
               </span>
             </div>
           </div>
@@ -813,17 +792,28 @@ function CreateReceiptContent() {
               </div>
             )}
 
+            {actionStep && (
+              <div className="text-xs font-black uppercase text-blue-900 border-3 border-[#111111] bg-[#bfdbfe] p-3 flex items-center gap-2">
+                <div className="w-4 h-4 border-2 border-[#111111] border-t-transparent rounded-full animate-spin" />
+                <span>{actionStep}</span>
+              </div>
+            )}
+
             <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                disabled={isPaySubmitting || !isConnected}
+                disabled={Boolean(actionStep) || isPaySubmitting || !isConnected}
                 className="neo-btn px-8 py-3.5 text-sm flex items-center gap-2 disabled:opacity-40"
               >
-                {isPaySubmitting
+                {actionStep
+                  ? "CONFIRM IN WALLET..."
+                  : isPaySubmitting
                   ? "PROCESSING TRANSACTION..."
                   : paymentMode === "swap"
-                    ? "APPROVE & SWAP & PAY →"
-                    : "APPROVE & ISSUE RECEIPT →"}
+                  ? "APPROVE & SWAP & PAY →"
+                  : allowanceValue >= (amount ? parseUsdcAmount(amount) : BigInt(1))
+                  ? "CONFIRM PAYMENT & ISSUE RECEIPT →"
+                  : "APPROVE & ISSUE RECEIPT →"}
               </button>
             </div>
           </form>

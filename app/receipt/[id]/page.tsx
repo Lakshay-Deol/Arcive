@@ -213,33 +213,9 @@ export default function ReceiptPage() {
   };
 
   const isParticipant =
-    connectedAddress &&
+    Boolean(connectedAddress &&
     (receipt.from.toLowerCase() === connectedAddress.toLowerCase() ||
-      receipt.to.toLowerCase() === connectedAddress.toLowerCase());
-
-  if (!isParticipant) {
-    return (
-      <div className="neo-box max-w-lg mx-auto p-8 bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] text-center space-y-4">
-        <div className="w-16 h-16 bg-[#f8ef88] border-3 border-[#111111] shadow-[4px_4px_0px_#111111] flex items-center justify-center mx-auto text-3xl font-black">
-          🔒
-        </div>
-        <span className="neo-badge neo-badge-black">PRIVATE AUDIT TRAIL</span>
-        <h2 className="text-2xl font-black text-[#111111] uppercase">ACCESS RESTRICTED</h2>
-        <p className="text-sm font-bold text-[#333333]">
-          This receipt is private. Only the <strong>Sender</strong> or <strong>Recipient</strong> can view the details.
-        </p>
-        {!connectedAddress ? (
-          <div className="p-3 bg-[#fef08a] border-2 border-[#111111] text-xs font-black uppercase">
-            Please connect your wallet above to verify participant status.
-          </div>
-        ) : (
-          <div className="p-3 bg-[#fbb6ce] border-2 border-[#111111] text-xs font-black uppercase text-[#111111]">
-            Access Denied: Connected wallet is not a party to this transaction.
-          </div>
-        )}
-      </div>
-    );
-  }
+      receipt.to.toLowerCase() === connectedAddress.toLowerCase()));
 
   const explorerUrl =
     process.env.NEXT_PUBLIC_EXPLORER_URL || "https://explorer.arc.io";
@@ -252,9 +228,14 @@ export default function ReceiptPage() {
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 border-b-4 border-[#111111] pb-4">
         <div>
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 flex-wrap">
             <span className="neo-badge neo-badge-green">OFFICIAL RECORD</span>
             <span className="neo-badge neo-badge-black">ARC NETWORK</span>
+            {isParticipant ? (
+              <span className="neo-badge neo-badge-green">✨ VERIFIED PARTICIPANT</span>
+            ) : (
+              <span className="neo-badge neo-badge-blue">🌐 PUBLIC AUDIT PROOF</span>
+            )}
           </div>
           <h1 className="text-4xl font-black text-[#111111] uppercase tracking-tight">
             PAYMENT RECEIPT
@@ -294,7 +275,7 @@ export default function ReceiptPage() {
           </div>
           <div className="flex flex-col sm:items-end gap-1">
             <span className="neo-badge neo-badge-pink text-xs">
-              {categoryLabels[receipt.category] || "Payment"}
+              {typeof receipt.category === "string" ? receipt.category : (categoryLabels[receipt.category] || "Payment")}
             </span>
             <span className="text-xs font-black text-[#444444] mt-1">
               {formatTimestamp(receipt.timestamp)}
