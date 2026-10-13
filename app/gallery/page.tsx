@@ -388,29 +388,25 @@ export default function GalleryPage() {
                   </span>
                 </div>
 
-                {/* Graphic Voucher or On-Chain SVG */}
-                {nft.svgDataUri ? (
-                  <div className="border-3 border-[#111111] shadow-[4px_4px_0px_#111111] overflow-hidden bg-[#f8ef88] p-2">
+                {/* Graphic NFT Voucher Art using Arcive Icon */}
+                <div className="border-3 border-[#111111] shadow-[4px_4px_0px_#111111] overflow-hidden bg-[#f8ef88] p-3 flex flex-col items-center justify-center">
+                  <div className="w-full aspect-square max-h-56 max-w-[220px] mx-auto flex items-center justify-center border-3 border-[#111111] shadow-[4px_4px_0px_#111111] overflow-hidden bg-[#f8ef88]">
                     <img
-                      src={nft.svgDataUri}
-                      alt={nft.tokenName || `Receipt #${nft.tokenId}`}
-                      className="w-full h-auto border-2 border-[#111111]"
+                      src="/icon.svg"
+                      alt={nft.tokenName || `Arcive NFT #${nft.tokenId}`}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
                     />
                   </div>
-                ) : (
-                  <div className="neo-box bg-[#f8ef88] border-3 border-[#111111] p-6 text-center space-y-2">
-                    <div className="w-12 h-12 bg-[#111111] text-[#f8ef88] font-black text-xl flex items-center justify-center border-2 border-[#111111] shadow-[3px_3px_0px_#111111] mx-auto">
-                      📜
-                    </div>
-                    <div className="text-3xl font-black text-[#111111]">
+                  <div className="mt-3 w-full flex items-center justify-between px-1">
+                    <span className="text-xl font-black text-[#111111]">
                       ${formatUsdc(nft.amount)}{" "}
-                      <span className="text-sm font-black text-[#111111]">USDC</span>
-                    </div>
-                    <span className="neo-badge neo-badge-pink text-[10px] inline-block">
+                      <span className="text-xs font-bold text-[#444444]">USDC</span>
+                    </span>
+                    <span className="neo-badge neo-badge-pink text-[10px]">
                       {nft.category}
                     </span>
                   </div>
-                )}
+                </div>
 
                 {/* Details */}
                 <div className="space-y-2 text-xs font-bold text-[#111111]">

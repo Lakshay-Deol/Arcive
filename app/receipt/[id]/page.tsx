@@ -265,12 +265,17 @@ export default function ReceiptPage() {
       >
         {/* Receipt Header Badge Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-6 border-b-4 border-[#111111]">
-          <div>
-            <span className="text-[10px] font-black uppercase text-[#666666] tracking-widest block">
-              RECEIPT IDENTIFIER
-            </span>
-            <div className="text-4xl font-black text-[#111111] tracking-tight">
-              #{receipt.id.toString()}
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-[#f8ef88] border-3 border-[#111111] shadow-[3px_3px_0px_#111111] overflow-hidden flex-shrink-0">
+              <img src="/icon.svg" alt="Arcive Emblem" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="text-[10px] font-black uppercase text-[#666666] tracking-widest block">
+                RECEIPT IDENTIFIER
+              </span>
+              <div className="text-3xl md:text-4xl font-black text-[#111111] tracking-tight">
+                #{receipt.id.toString()}
+              </div>
             </div>
           </div>
           <div className="flex flex-col sm:items-end gap-1">
@@ -348,6 +353,35 @@ export default function ReceiptPage() {
           <span className="text-[10px] font-black uppercase tracking-widest text-[#666666]">
             ARCIVE IMMUTABLE PROTOCOL
           </span>
+        </div>
+      </div>
+
+      {/* NFT PROOF OF PAYMENT CARD WITH ICON */}
+      <div className="neo-box bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] p-6 space-y-4">
+        <div className="flex items-center justify-between border-b-3 border-[#111111] pb-3">
+          <div className="flex items-center gap-2">
+            <span className="neo-badge neo-badge-black text-xs">ERC-721 NFT</span>
+            <h3 className="text-base font-black uppercase text-[#111111]">
+              DIGITAL ASSET PROOF
+            </h3>
+          </div>
+          <span className="neo-badge neo-badge-green text-xs">
+            VERIFIED ON ARC MAINNET
+          </span>
+        </div>
+
+        <div className="border-3 border-[#111111] shadow-[4px_4px_0px_#111111] bg-[#f8ef88] p-6 flex flex-col items-center justify-center">
+          <div className="w-48 h-48 border-3 border-[#111111] shadow-[4px_4px_0px_#111111] overflow-hidden bg-[#f8ef88]">
+            <img src="/icon.svg" alt={`Receipt #${receipt.id}`} className="w-full h-full object-cover" />
+          </div>
+          <div className="mt-4 text-center">
+            <div className="text-2xl font-black text-[#111111]">
+              ARCIVE PROOF #{receipt.id.toString()}
+            </div>
+            <div className="text-xs font-bold text-[#444444] uppercase mt-1">
+              SETTLED AMOUNT: ${formatUsdc(receipt.amount)} USDC • TOKEN ID #{receipt.id.toString()}
+            </div>
+          </div>
         </div>
       </div>
 
