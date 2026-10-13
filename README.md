@@ -43,7 +43,7 @@ Arcive gives every USDC transaction on Arc Mainnet a permanent on-chain receipt 
 
 ---
 
-## 🌐 Arc Mainnet Network Parameters
+## 🌐 Arc Mainnet Network Parameters & Deployed Contract
 
 | Parameter | Specification |
 | :--- | :--- |
@@ -52,6 +52,8 @@ Arcive gives every USDC transaction on Arc Mainnet a permanent on-chain receipt 
 | **RPC Endpoint** | `https://rpc.mainnet.arc.io` |
 | **Native Gas Currency** | `USDC` (18 decimals) |
 | **Official USDC Token** | `0x3600000000000000000000000000000000000000` |
+| **ArciveNFT Deployed Contract** | [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f) |
+| **Deployment Transaction** | [`0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992`](https://explorer.arc.io/tx/0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992) |
 | **Block Explorer** | [https://explorer.arc.io](https://explorer.arc.io) |
 
 ---

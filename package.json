@@ -11,6 +11,7 @@
     "compile:nft": "node scripts/compile-arcive-nft.js",
     "estimate-gas": "node scripts/estimate-gas.js",
     "deploy:mainnet": "node scripts/deploy-arcive-nft.js",
+    "deploy:mainet": "node scripts/deploy-arcive-nft.js",
     "deploy": "node scripts/deploy-arcive-nft.js"
   },
   "dependencies": {
