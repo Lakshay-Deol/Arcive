@@ -222,7 +222,7 @@ export default function ReceiptPage() {
   }
 
   const explorerUrl =
-    process.env.NEXT_PUBLIC_EXPLORER_URL || "https://testnet.arcscan.app";
+    process.env.NEXT_PUBLIC_EXPLORER_URL || "https://explorer.arc.io";
   const explorerLink = txHash
     ? `${explorerUrl}/tx/${txHash}`
     : `${explorerUrl}/address/${ARC_RECEIPTS_ADDRESS}`;

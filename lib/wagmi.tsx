@@ -7,7 +7,7 @@ import {
 } from "@rainbow-me/rainbowkit";
 import { WagmiProvider, createStorage, cookieStorage } from "wagmi";
 import { ReactNode, useState, useEffect } from "react";
-import { arcTestnet, arcMainnet } from "./chains";
+import { arcMainnet } from "./chains";
 import {
   QueryClient,
   QueryClientProvider,
@@ -28,7 +28,7 @@ if (typeof window === "undefined") {
 export const config = getDefaultConfig({
   appName: "Arcive",
   projectId: "c4f79cc821944d9680842e34466bfb", // Safe fallback WalletConnect public ID
-  chains: [arcTestnet, arcMainnet],
+  chains: [arcMainnet],
   ssr: true,
   storage: createStorage({
     storage: cookieStorage,

@@ -19,13 +19,13 @@ async function main() {
     process.exit(1);
   }
 
-  const rpcUrl = process.env.RPC_URL || 'https://rpc.testnet.arc.network';
-  const chainId = parseInt(process.env.CHAIN_ID || '5042002', 10);
+  const rpcUrl = process.env.RPC_URL || 'https://rpc.mainnet.arc.io';
+  const chainId = parseInt(process.env.CHAIN_ID || '5042', 10);
   const usdcAddress = process.env.USDC_ADDRESS || '0x3600000000000000000000000000000000000000';
 
   const chain = defineChain({
     id: chainId,
-    name: 'Arc Network',
+    name: 'Arc Mainnet',
     nativeCurrency: { name: 'USDC', symbol: 'USDC', decimals: 18 },
     rpcUrls: { default: { http: [rpcUrl] } },
   });

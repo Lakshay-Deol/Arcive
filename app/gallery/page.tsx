@@ -50,11 +50,11 @@ export default function GalleryPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const explorerUrl =
-    process.env.NEXT_PUBLIC_EXPLORER_URL || "https://testnet.arcscan.app";
+    process.env.NEXT_PUBLIC_EXPLORER_URL || "https://explorer.arc.io";
   const contractAddress = ARCIVE_NFT_ADDRESS || ARC_RECEIPTS_ADDRESS;
 
   useEffect(() => {
-    if (!publicClient) return;
+    if (!publicClient || !contractAddress) return;
 
     async function fetchNFTs() {
       setLoading(true);
@@ -275,6 +275,25 @@ export default function GalleryPage() {
           <span>＋ MINT NEW PROOF</span>
         </Link>
       </header>
+
+      {/* MAINNET DEPLOYMENT PENDING BANNER */}
+      {!contractAddress && (
+        <div className="neo-box p-8 bg-[#fef08a] border-4 border-[#111111] shadow-[8px_8px_0px_#111111] text-center space-y-4">
+          <div className="flex items-center justify-center gap-2">
+            <span className="neo-badge bg-[#f59e0b] text-[#111111]">ARC MAINNET (CHAIN ID 5042)</span>
+            <span className="neo-badge neo-badge-black">STANDBY</span>
+          </div>
+          <h2 className="text-2xl font-black uppercase text-[#111111]">
+            Awaiting Real Mainnet Contract Deployment
+          </h2>
+          <p className="text-sm font-bold text-[#333333] max-w-xl mx-auto">
+            Arcive is primed for Arc Mainnet. Run the deployment script below in your shell to broadcast <code>ArciveNFT.sol</code> and populate live verified NFT proofs:
+          </p>
+          <div className="bg-white border-3 border-[#111111] p-3 text-xs font-mono font-black max-w-lg mx-auto shadow-[3px_3px_0px_#111111] text-left">
+            <code>$env:DEPLOYER_PRIVATE_KEY="0x..." ; npm run deploy:mainnet</code>
+          </div>
+        </div>
+      )}
 
       {/* FILTER BAR */}
       <div className="neo-box p-4 bg-white border-4 border-[#111111] shadow-[6px_6px_0px_#111111] flex flex-wrap items-center justify-between gap-4">

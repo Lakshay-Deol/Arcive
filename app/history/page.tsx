@@ -70,7 +70,10 @@ export default function HistoryPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   useEffect(() => {
-    if (!isConnected || !address || !publicClient) return;
+    if (!isConnected || !address || !publicClient || !ARC_RECEIPTS_ADDRESS) {
+      setIsLoading(false);
+      return;
+    }
 
     async function loadReceipts() {
       setIsLoading(true);
@@ -235,7 +238,20 @@ export default function HistoryPage() {
         )}
       </header>
 
-      {!isConnected ? (
+      {!ARC_RECEIPTS_ADDRESS ? (
+        <div className="neo-box p-12 bg-[#fef08a] border-4 border-[#111111] shadow-[8px_8px_0px_#111111] text-center space-y-4 max-w-xl mx-auto">
+          <div className="flex items-center justify-center gap-2">
+            <span className="neo-badge bg-[#f59e0b] text-[#111111]">ARC MAINNET (CHAIN ID 5042)</span>
+            <span className="neo-badge neo-badge-black">STANDBY</span>
+          </div>
+          <h2 className="text-2xl font-black uppercase text-[#111111]">
+            Awaiting Real Mainnet Contract Deployment
+          </h2>
+          <p className="text-sm font-bold text-[#333333]">
+            Deploy <code>ArciveNFT.sol</code> using <code>npm run deploy:mainnet</code> in your shell to activate the on-chain receipt ledger.
+          </p>
+        </div>
+      ) : !isConnected ? (
         <div className="neo-box p-12 bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] text-center space-y-3">
           <span className="neo-badge neo-badge-black">WALLET NOT CONNECTED</span>
           <h2 className="text-2xl font-black text-[#111111] uppercase">CONNECT WALLET TO VIEW LEDGER</h2>

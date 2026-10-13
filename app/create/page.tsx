@@ -410,6 +410,11 @@ function CreateReceiptContent() {
       return;
     }
 
+    if (paymentMode === "direct" && !ARCIVE_NFT_ADDRESS && !ARC_RECEIPTS_ADDRESS) {
+      setFormError("Arc Mainnet contract is awaiting deployment. Run 'npm run deploy:mainnet' in your terminal and set NEXT_PUBLIC_ARCIVE_NFT_CONTRACT.");
+      return;
+    }
+
     if (paymentMode === "swap") {
       if (!ARC_FX_ROUTER_ADDRESS) {
         setFormError("Router address not configured.");
@@ -591,7 +596,7 @@ function CreateReceiptContent() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className="neo-badge neo-badge-black">SETTLEMENT ENGINE</span>
-            <span className="neo-badge neo-badge-green">ARC TESTNET & MAINNET</span>
+            <span className="neo-badge neo-badge-green">ARC NETWORK MAINNET (5042)</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-black text-[#111111] uppercase tracking-tight">
             SEND PAYMENT & ISSUE RECEIPT
@@ -610,6 +615,21 @@ function CreateReceiptContent() {
           <span>{isFormOpen ? "CLOSE FORM" : "NEW PAYMENT"}</span>
         </button>
       </header>
+
+      {(!ARCIVE_NFT_ADDRESS && !ARC_RECEIPTS_ADDRESS) && (
+        <div className="neo-box p-6 bg-[#fef08a] border-4 border-[#111111] shadow-[6px_6px_0px_#111111] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="space-y-1 text-left">
+            <div className="flex items-center gap-2">
+              <span className="neo-badge bg-[#f59e0b] text-[#111111]">ARC MAINNET (5042)</span>
+              <span className="neo-badge neo-badge-black">CONTRACT STANDBY</span>
+            </div>
+            <p className="text-xs font-bold text-[#111111]">
+              Awaiting live Arc Mainnet contract deployment. Run <code>npm run deploy:mainnet</code> in your PowerShell shell with your deployer key.
+            </p>
+          </div>
+          <span className="neo-badge neo-badge-black text-[10px] shrink-0">READY FOR DEPLOYMENT</span>
+        </div>
+      )}
 
       {isFormOpen && (
         <div className="neo-box bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] p-6 space-y-6">

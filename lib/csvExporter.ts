@@ -50,8 +50,9 @@ export function exportReceiptsToCsv(receipts: any[], currentAddress: string | un
     const type = isSent ? "SENT (OUT)" : "RECEIVED (IN)";
     
     // تنظيف النصوص من أي فواصل قد تكسر الملف
-    const cleanReason = r.reason ? r.reason.replace(/"/g, '""') : "";
-    const link = `https://testnet.arcscan.app/address/${r.to}`; 
+    const explorerBase = process.env.NEXT_PUBLIC_EXPLORER_URL || "https://explorer.arc.io";
+    const link = `${explorerBase}/address/${r.to}`; 
+    const cleanReason = (r.reason || r.note || "").toString().replace(/"/g, '""');
 
     // ✅ التعديل: نضع كل قيمة داخل علامات تنصيص لضمان التنسيق
     return [

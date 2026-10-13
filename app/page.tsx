@@ -16,7 +16,7 @@ export default function HomePage() {
           ONE REPORT. CONNECTED CONTEXT.
         </span>
         <span className="neo-badge neo-badge-black border-3 border-[#111111] shadow-[3px_3px_0px_#111111]">
-          ARC NETWORK MAINNET & TESTNET
+          ARC NETWORK MAINNET (CHAIN ID 5042)
         </span>
       </div>
 
