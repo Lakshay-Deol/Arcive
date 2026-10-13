@@ -6,7 +6,6 @@ import { useReadContract, usePublicClient, useAccount } from "wagmi";
 import { parseAbiItem } from "viem";
 import html2canvas from "html2canvas";
 import Link from "next/link";
-import NftVoucherCard from "../../components/NftVoucherCard";
 import {
   ARC_RECEIPTS_ADDRESS,
   ARC_RECEIPTS_ABI,
@@ -266,17 +265,12 @@ export default function ReceiptPage() {
       >
         {/* Receipt Header Badge Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-6 border-b-4 border-[#111111]">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-[#0d0f17] border-3 border-[#111111] shadow-[3px_3px_0px_#111111] rounded-sm overflow-hidden p-1 flex-shrink-0">
-              <img src="/arc-logo.png" alt="Arcive Emblem" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <span className="text-[10px] font-black uppercase text-[#666666] tracking-widest block">
-                RECEIPT IDENTIFIER
-              </span>
-              <div className="text-3xl md:text-4xl font-black text-[#111111] tracking-tight">
-                #{receipt.id.toString()}
-              </div>
+          <div>
+            <span className="text-[10px] font-black uppercase text-[#666666] tracking-widest block">
+              RECEIPT IDENTIFIER
+            </span>
+            <div className="text-4xl font-black text-[#111111] tracking-tight">
+              #{receipt.id.toString()}
             </div>
           </div>
           <div className="flex flex-col sm:items-end gap-1">
@@ -355,32 +349,6 @@ export default function ReceiptPage() {
             ARCIVE IMMUTABLE PROTOCOL
           </span>
         </div>
-      </div>
-
-      {/* OFFICIAL NFT CERTIFICATE PROOF WITH LOGO */}
-      <div className="pt-2 space-y-3">
-        <div className="flex items-center justify-between border-b-3 border-[#111111] pb-2">
-          <div className="flex items-center gap-2">
-            <span className="neo-badge neo-badge-black text-xs">IMMUTABLE CERTIFICATE</span>
-            <h3 className="text-base font-black uppercase text-[#111111]">
-              ERC-721 NFT DIGITAL PROOF
-            </h3>
-          </div>
-          <span className="text-[11px] font-bold text-[#444444]">
-            ARC MAINNET (5042)
-          </span>
-        </div>
-
-        <NftVoucherCard
-          tokenId={receipt.id}
-          payer={receipt.from}
-          payee={receipt.to}
-          amount={receipt.amount}
-          category={typeof receipt.category === "string" ? receipt.category : (categoryLabels[receipt.category] || "Payment")}
-          note={receipt.reason}
-          timestamp={receipt.timestamp}
-          contractAddress={targetAddress}
-        />
       </div>
 
       {/* Explorer and Copy Links */}

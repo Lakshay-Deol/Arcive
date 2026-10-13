@@ -569,18 +569,13 @@ function CreateReceiptContent() {
       <Link href={`/receipt/${lastMyReceipt.id.toString()}`}>
         <div className="neo-box bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] p-6 space-y-4 hover:bg-[#fef9c3] transition-all cursor-pointer">
           <div className="flex justify-between items-start pb-3 border-b-3 border-[#111111]">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-[#0d0f17] border-2 border-[#111111] shadow-[2px_2px_0px_#111111] rounded-sm overflow-hidden p-0.5">
-                <img src="/arc-logo.png" alt="Arcive" className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <span className="block text-[10px] uppercase tracking-wider text-[#666666] font-black mb-0.5">
-                  LATEST RECORD
-                </span>
-                <span className="text-xl font-black text-[#111111]">
-                  #{lastMyReceipt.id.toString()}
-                </span>
-              </div>
+            <div>
+              <span className="block text-[10px] uppercase tracking-wider text-[#666666] font-black mb-1">
+                RECEIPT IDENTIFIER
+              </span>
+              <span className="text-2xl font-black text-[#111111]">
+                #{lastMyReceipt.id.toString()}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span

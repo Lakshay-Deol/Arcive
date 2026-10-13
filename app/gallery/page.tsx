@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useAccount, usePublicClient } from "wagmi";
 import Link from "next/link";
-import NftVoucherCard from "../components/NftVoucherCard";
 import {
   ARCIVE_NFT_ADDRESS,
   ARCIVE_NFT_ABI,
@@ -369,20 +368,110 @@ export default function GalleryPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedNfts.map((nft) => (
-            <NftVoucherCard
+            <div
               key={nft.tokenId.toString()}
-              tokenId={nft.tokenId}
-              payer={nft.payer}
-              payee={nft.payee}
-              amount={nft.amount}
-              category={nft.category}
-              note={nft.note}
-              timestamp={nft.timestamp}
-              owner={nft.owner}
-              svgDataUri={nft.svgDataUri}
-              contractAddress={contractAddress}
-              onAddToWallet={handleAddToWallet}
-            />
+              className="neo-box bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] p-6 space-y-4 hover:bg-[#fef9c3] transition-all flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                {/* Badge & ID */}
+                <div className="flex items-center justify-between pb-3 border-b-3 border-[#111111]">
+                  <div className="flex items-center gap-2">
+                    <span className="neo-badge neo-badge-black text-xs">
+                      TOKEN #{nft.tokenId.toString()}
+                    </span>
+                    <span className="text-[10px] font-black uppercase text-[#666666]">
+                      ERC-721
+                    </span>
+                  </div>
+                  <span className="neo-badge neo-badge-green text-[10px]">
+                    VERIFIED
+                  </span>
+                </div>
+
+                {/* Graphic Voucher or On-Chain SVG */}
+                {nft.svgDataUri ? (
+                  <div className="border-3 border-[#111111] shadow-[4px_4px_0px_#111111] overflow-hidden bg-[#f8ef88] p-2">
+                    <img
+                      src={nft.svgDataUri}
+                      alt={nft.tokenName || `Receipt #${nft.tokenId}`}
+                      className="w-full h-auto border-2 border-[#111111]"
+                    />
+                  </div>
+                ) : (
+                  <div className="neo-box bg-[#f8ef88] border-3 border-[#111111] p-6 text-center space-y-2">
+                    <div className="w-12 h-12 bg-[#111111] text-[#f8ef88] font-black text-xl flex items-center justify-center border-2 border-[#111111] shadow-[3px_3px_0px_#111111] mx-auto">
+                      📜
+                    </div>
+                    <div className="text-3xl font-black text-[#111111]">
+                      ${formatUsdc(nft.amount)}{" "}
+                      <span className="text-sm font-black text-[#111111]">USDC</span>
+                    </div>
+                    <span className="neo-badge neo-badge-pink text-[10px] inline-block">
+                      {nft.category}
+                    </span>
+                  </div>
+                )}
+
+                {/* Details */}
+                <div className="space-y-2 text-xs font-bold text-[#111111]">
+                  <div className="p-2 bg-white border-2 border-[#111111]">
+                    <span className="text-[9px] font-black uppercase text-[#666666] block">
+                      PURPOSE / NOTE
+                    </span>
+                    <span className="text-xs truncate block font-black">
+                      "{nft.note}"
+                    </span>
+                  </div>
+
+                  <div className="p-2 bg-white border-2 border-[#111111] font-mono text-[11px] space-y-1">
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-gray-500 font-sans font-bold">OWNER:</span>
+                      <span className="font-bold text-emerald-800">
+                        {nft.owner ? `${nft.owner.substring(0, 6)}...${nft.owner.substring(38)}` : "—"}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-gray-500 font-sans font-bold">PAYER:</span>
+                      <span className="font-bold">{nft.payer.substring(0, 6)}...{nft.payer.substring(38)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-[10px]">
+                      <span className="text-gray-500 font-sans font-bold">PAYEE:</span>
+                      <span className="font-bold">{nft.payee.substring(0, 6)}...{nft.payee.substring(38)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t-2 border-[#111111] flex flex-wrap items-center justify-between gap-2">
+                <Link
+                  href={`/receipt/${nft.tokenId.toString()}`}
+                  className="neo-btn px-3 py-1.5 text-xs flex items-center gap-1"
+                >
+                  <span>VIEW VOUCHER</span>
+                  <span>↗</span>
+                </Link>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleAddToWallet(nft.tokenId)}
+                    className="bg-[#111111] text-[#f8ef88] border-2 border-[#111111] px-2.5 py-1 text-[11px] font-black uppercase shadow-[2px_2px_0px_#111111] hover:bg-[#333333] transition-all"
+                    title="Import NFT token directly into MetaMask / Rainbow wallet"
+                  >
+                    + WALLET
+                  </button>
+
+                  <a
+                    href={`${explorerUrl}/address/${contractAddress}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[11px] font-black uppercase text-blue-700 underline hover:text-blue-900"
+                  >
+                    EXPLORER ↗
+                  </a>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}

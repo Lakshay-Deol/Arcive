@@ -64,24 +64,17 @@ export default function HomePage() {
         {/* Right Cards Area */}
         <div className="lg:col-span-5 space-y-6">
           {/* Candidate / Verification Report Card */}
-          <div className="neo-box p-6 bg-[#0d0f17] text-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111] relative overflow-hidden">
-            <div className="flex items-center justify-between pb-3 border-b-2 border-slate-700 mb-4">
-              <span className="neo-badge bg-[#fef08a] text-[#111111] text-[10px]">THE ARCIVE STANDARD</span>
+          <div className="neo-box p-6 bg-white border-4 border-[#111111] shadow-[8px_8px_0px_#111111]">
+            <div className="flex items-center justify-between pb-3 border-b-2 border-[#111111] mb-4">
+              <span className="neo-badge neo-badge-black text-[10px]">THE ARCIVE STANDARD</span>
               <span className="neo-badge bg-[#10b981] text-white text-[10px]">VERIFIED</span>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-lg bg-gradient-to-tr from-cyan-400 to-blue-600 p-0.5 shadow-[0_0_20px_rgba(56,189,248,0.4)] flex-shrink-0">
-                <img src="/arc-logo.png" alt="Arcive Official Logo" className="w-full h-full object-cover rounded-md" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black text-white uppercase leading-tight">
-                  Single-transaction settlement with on-chain NFT proofs.
-                </h3>
-                <p className="text-[11px] font-bold text-cyan-300 mt-1 uppercase tracking-wide">
-                  IMMUTABLE AUDIT TRAIL ON ARC NETWORK
-                </p>
-              </div>
-            </div>
+            <h3 className="text-lg font-black text-[#111111] uppercase leading-tight">
+              Single-transaction settlement without trusted owner keys.
+            </h3>
+            <p className="text-xs font-bold text-[#666666] mt-2 uppercase tracking-wide">
+              REPORT SUMMARY, SYNTHESIZED FOR LENDER & AUDITOR REVIEW
+            </p>
           </div>
 
           {/* Recorded Result Box */}
