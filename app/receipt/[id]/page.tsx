@@ -69,6 +69,24 @@ export default function ReceiptPage() {
       if (!publicClient) return;
       setIsFetchingHash(true);
       try {
+        try {
+          const logs = await publicClient.getLogs({
+            address: ARC_RECEIPTS_ADDRESS,
+            event: parseAbiItem(
+              "event Paid(uint256 indexed id, address indexed payer, address indexed payee, uint256 amount, string category, string note)"
+            ),
+            args: { id: receiptId },
+            fromBlock: "earliest",
+          });
+
+          if (logs.length > 0) {
+            setTxHash(logs[0].transactionHash);
+            return;
+          }
+        } catch {
+          // fallback to ReceiptCreated event
+        }
+
         const logs = await publicClient.getLogs({
           address: ARC_RECEIPTS_ADDRESS,
           event: parseAbiItem(
@@ -146,18 +164,32 @@ export default function ReceiptPage() {
   const rawData = data as any;
   const meta = rawData.meta || rawData[5];
 
+  const categoryString =
+    typeof rawData.category === "string"
+      ? rawData.category
+      : meta && typeof meta.category !== "undefined"
+      ? categoryLabels[Number(meta.category)] || "Payment"
+      : meta && typeof meta[0] !== "undefined"
+      ? categoryLabels[Number(meta[0])] || "Payment"
+      : "Payment";
+
+  const noteString =
+    typeof rawData.note === "string"
+      ? rawData.note
+      : meta?.reason ?? meta?.[1] ?? "Arcive verified payment";
+
   const receipt = {
-    id: rawData.id ?? rawData[0],
-    from: rawData.from ?? rawData[1],
-    to: rawData.to ?? rawData[2],
-    amount: rawData.amount ?? rawData[4],
-    token: rawData.token ?? rawData[3],
-    category: typeof meta.category !== "undefined" ? Number(meta.category) : Number(meta[0]),
-    reason: meta.reason ?? meta[1],
-    sourceCurrency: meta.sourceCurrency ?? meta[2],
-    destinationCurrency: meta.destinationCurrency ?? meta[3],
-    corridor: meta.corridor ?? meta[4],
-    timestamp: rawData.timestamp ?? rawData[6],
+    id: rawData.id ?? rawData[0] ?? receiptId,
+    from: rawData.payer ?? rawData.from ?? rawData[0] ?? rawData[1] ?? "",
+    to: rawData.payee ?? rawData.to ?? rawData[1] ?? rawData[2] ?? "",
+    amount: rawData.amount ?? rawData[2] ?? rawData[4] ?? BigInt(0),
+    token: rawData.token ?? rawData[3] ?? "0x3600000000000000000000000000000000000000",
+    category: categoryString,
+    reason: noteString,
+    sourceCurrency: meta?.sourceCurrency ?? meta?.[2] ?? "USDC",
+    destinationCurrency: meta?.destinationCurrency ?? meta?.[3] ?? "USDC",
+    corridor: meta?.corridor ?? meta?.[4] ?? "ARC",
+    timestamp: rawData.timestamp ?? (meta ? rawData[6] : rawData[5]) ?? BigInt(0),
   };
 
   const isParticipant =
@@ -189,9 +221,11 @@ export default function ReceiptPage() {
     );
   }
 
+  const explorerUrl =
+    process.env.NEXT_PUBLIC_EXPLORER_URL || "https://testnet.arcscan.app";
   const explorerLink = txHash
-    ? `https://testnet.arcscan.app/tx/${txHash}`
-    : `https://testnet.arcscan.app/address/${ARC_RECEIPTS_ADDRESS}`;
+    ? `${explorerUrl}/tx/${txHash}`
+    : `${explorerUrl}/address/${ARC_RECEIPTS_ADDRESS}`;
 
   return (
     <section className="max-w-3xl mx-auto space-y-6">

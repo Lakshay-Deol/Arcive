@@ -15,6 +15,10 @@ import {
   ARC_RECEIPTS_ADDRESS,
   ARC_RECEIPTS_ABI,
 } from "../../lib/arcReceiptsContract";
+import {
+  ARCIVE_NFT_ADDRESS,
+  ARCIVE_NFT_ABI,
+} from "../../lib/arciveNftContract";
 import { ARC_USDC_ADDRESS, ARC_USDC_ABI } from "../../lib/usdcToken";
 import { SUPPORTED_TOKENS } from "../../lib/supportedTokens";
 
@@ -429,31 +433,57 @@ function CreateReceiptContent() {
         else refetchAllowanceDirect();
       }
 
-      const nextId = (await publicClient.readContract({
-        address: ARC_RECEIPTS_ADDRESS,
-        abi: ARC_RECEIPTS_ABI,
-        functionName: "nextReceiptId",
-      })) as bigint;
-      setExpectedReceiptId(nextId.toString());
+      let nextIdVal = "1";
+      try {
+        const nextId = (await publicClient.readContract({
+          address: ARCIVE_NFT_ADDRESS,
+          abi: ARCIVE_NFT_ABI,
+          functionName: "totalReceipts",
+        })) as bigint;
+        nextIdVal = nextId.toString();
+      } catch {
+        try {
+          const nextId = (await publicClient.readContract({
+            address: ARC_RECEIPTS_ADDRESS,
+            abi: ARC_RECEIPTS_ABI,
+            functionName: "nextReceiptId",
+          })) as bigint;
+          nextIdVal = nextId.toString();
+        } catch {
+          nextIdVal = "1";
+        }
+      }
+      setExpectedReceiptId(nextIdVal);
 
       if (paymentMode === "direct") {
-        await writePayAsync({
-          address: ARC_RECEIPTS_ADDRESS,
-          abi: ARC_RECEIPTS_ABI,
-          functionName: "payWithReceipt",
-          args: [
-            ARC_USDC_ADDRESS,
-            toAddress,
-            usdcAmount,
-            {
-              category: category,
-              reason: reason,
-              sourceCurrency: sourceCurrency,
-              destinationCurrency: destinationCurrency,
-              corridor: corridor
-            }
-          ],
-        });
+        const categoryName = categories.find((c) => c.value === category)?.label || "Payment";
+        try {
+          await writePayAsync({
+            address: ARCIVE_NFT_ADDRESS,
+            abi: ARCIVE_NFT_ABI,
+            functionName: "pay",
+            args: [toAddress, usdcAmount, categoryName, reason || "Arcive Payment"],
+          });
+        } catch (nftErr: any) {
+          console.warn("NFT pay() call failed, trying payWithReceipt fallback...", nftErr);
+          await writePayAsync({
+            address: ARC_RECEIPTS_ADDRESS,
+            abi: ARC_RECEIPTS_ABI,
+            functionName: "payWithReceipt",
+            args: [
+              ARC_USDC_ADDRESS,
+              toAddress,
+              usdcAmount,
+              {
+                category: category,
+                reason: reason,
+                sourceCurrency: sourceCurrency,
+                destinationCurrency: destinationCurrency,
+                corridor: corridor,
+              },
+            ],
+          });
+        }
       } else {
         await writePayAsync({
           address: ARC_FX_ROUTER_ADDRESS,

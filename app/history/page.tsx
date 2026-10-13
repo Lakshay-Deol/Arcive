@@ -77,21 +77,48 @@ export default function HistoryPage() {
       setFetchError(null);
 
       try {
-        const nextId = (await publicClient!.readContract({
-          address: ARC_RECEIPTS_ADDRESS,
-          abi: ARC_RECEIPTS_ABI,
-          functionName: "nextReceiptId",
-        })) as bigint;
+        let total = 0;
+        let isNft = false;
 
-        const total = Number(nextId);
-        if (total <= 1) {
+        try {
+          const totalBig = (await publicClient!.readContract({
+            address: ARC_RECEIPTS_ADDRESS,
+            abi: [
+              {
+                inputs: [],
+                name: "totalReceipts",
+                outputs: [{ type: "uint256" }],
+                stateMutability: "view",
+                type: "function",
+              },
+            ],
+            functionName: "totalReceipts",
+          })) as bigint;
+          total = Number(totalBig);
+          isNft = true;
+        } catch {
+          try {
+            const nextId = (await publicClient!.readContract({
+              address: ARC_RECEIPTS_ADDRESS,
+              abi: ARC_RECEIPTS_ABI,
+              functionName: "nextReceiptId",
+            })) as bigint;
+            total = Math.max(0, Number(nextId) - 1);
+          } catch {
+            total = 0;
+          }
+        }
+
+        if (total <= 0) {
           setReceipts([]);
           setIsLoading(false);
           return;
         }
 
         const calls = [];
-        for (let i = 1; i < total; i++) {
+        const startIdx = isNft ? 0 : 1;
+        const endIdx = isNft ? total : total + 1;
+        for (let i = startIdx; i < endIdx; i++) {
           calls.push(
             publicClient!.readContract({
               address: ARC_RECEIPTS_ADDRESS,
@@ -103,20 +130,36 @@ export default function HistoryPage() {
         }
 
         const rawResults = await Promise.all(calls);
-        const parsed: Receipt[] = rawResults.map((r: any) => {
+        const parsed: Receipt[] = rawResults.map((r: any, idx: number) => {
           const meta = r.meta || r[5];
+          const categoryVal =
+            typeof r.category === "string"
+              ? Object.values(categoryLabels).indexOf(r.category) !== -1
+                ? Object.values(categoryLabels).indexOf(r.category)
+                : 6
+              : meta && typeof meta.category !== "undefined"
+              ? Number(meta.category)
+              : meta && typeof meta[0] !== "undefined"
+              ? Number(meta[0])
+              : 6;
+
+          const reasonVal =
+            typeof r.note === "string"
+              ? r.note
+              : meta?.reason ?? meta?.[1] ?? "Arcive Payment";
+
           return {
-            id: r.id ?? r[0],
-            from: r.from ?? r[1],
-            to: r.to ?? r[2],
-            token: r.token ?? r[3],
-            amount: r.amount ?? r[4],
-            category: typeof meta.category !== "undefined" ? Number(meta.category) : Number(meta[0]),
-            reason: meta.reason ?? meta[1],
-            sourceCurrency: meta.sourceCurrency ?? meta[2],
-            destinationCurrency: meta.destinationCurrency ?? meta[3],
-            corridor: meta.corridor ?? meta[4],
-            timestamp: r.timestamp ?? r[6],
+            id: r.id ?? r[0] ?? BigInt(startIdx + idx),
+            from: r.payer ?? r.from ?? r[0] ?? r[1] ?? "",
+            to: r.payee ?? r.to ?? r[1] ?? r[2] ?? "",
+            token: r.token ?? r[3] ?? "0x3600000000000000000000000000000000000000",
+            amount: r.amount ?? r[2] ?? r[4] ?? BigInt(0),
+            category: categoryVal,
+            reason: reasonVal,
+            sourceCurrency: meta?.sourceCurrency ?? meta?.[2] ?? "USDC",
+            destinationCurrency: meta?.destinationCurrency ?? meta?.[3] ?? "USDC",
+            corridor: meta?.corridor ?? meta?.[4] ?? "ARC",
+            timestamp: r.timestamp ?? (meta ? r[6] : r[5]) ?? BigInt(0),
           };
         });
 

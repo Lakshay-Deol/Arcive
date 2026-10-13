@@ -4,8 +4,13 @@ import { Web3Providers } from "../lib/wagmi";
 import Sidebar from "./components/Sidebar";
 
 export const metadata: Metadata = {
-  title: "Arcive — Deterministic On-Chain Payment Receipts on Arc",
+  title: "Arcive",
   description: "One report. One verified handoff. Permanent, auditable on-chain receipts on Arc Network.",
+  icons: {
+    icon: "/icon.svg",
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

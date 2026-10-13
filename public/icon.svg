@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Yellow canvas background -->
+  <rect width="100" height="100" fill="#f8ef88"/>
+  
+  <!-- Offset black shadow box -->
+  <rect x="22" y="19" width="60" height="60" fill="#111111"/>
+  
+  <!-- Main black square -->
+  <rect x="18" y="15" width="60" height="60" fill="#111111"/>
+  
+  <!-- Yellow bold letter "A" -->
+  <text 
+    x="48" 
+    y="59" 
+    font-family="system-ui, -apple-system, sans-serif" 
+    font-size="44" 
+    font-weight="900" 
+    fill="#f8ef88" 
+    text-anchor="middle"
+    dominant-baseline="central">A</text>
+</svg>

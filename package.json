@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "compile": "node scripts/compile-arcive.js && node scripts/compile-arcive-nft.js",
+    "compile:nft": "node scripts/compile-arcive-nft.js",
+    "deploy:testnet": "node scripts/deploy-arcive-nft.js",
+    "deploy:mainnet": "node scripts/deploy-arcive-nft.js"
   },
   "dependencies": {
     "@rainbow-me/rainbowkit": "^2.2.9",
@@ -30,7 +34,7 @@
     "eslint": "8.57.0",
     "eslint-config-next": "14.2.15",
     "hardhat": "^3.19.0",
-    "solc": "^0.8.20",
+    "solc": "^0.8.24",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

@@ -1,4 +1,5 @@
-export const ARC_RECEIPTS_ADDRESS = (process.env.NEXT_PUBLIC_ARCIVE_CONTRACT ||
+export const ARC_RECEIPTS_ADDRESS = (process.env.NEXT_PUBLIC_ARCIVE_NFT_CONTRACT ||
+  process.env.NEXT_PUBLIC_ARCIVE_CONTRACT ||
   process.env.NEXT_PUBLIC_RECEIPT_CONTRACT ||
   "0x5d4821a82df5dEBBc518f9f9FFCcA4fA3c06629F") as `0x${string}`;
 
