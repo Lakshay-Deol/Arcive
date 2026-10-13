@@ -16,12 +16,12 @@
 | 🔗 **Live app** | <https://arcive-delta.vercel.app> |
 | 📜 **Contract** | [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f) |
 | 🔍 **Deployment tx** | [`0x988bec74…c0c992`](https://explorer.arc.io/tx/0x988bec746bdbe268c304461c91a324fcd19b0942bb3e7517f0c0093119c0c992) |
-| 🎬 **Demo video** | [Watch on YouTube](https://www.youtube.com/watch?v=YOUR_VIDEO_ID) |
+| 🎬 **Demo video** | (https://youtu.be/-M5GomP-JFs) |
 
 ### 🎬 Demo
 
 <!-- 🎥 YOUTUBE DEMO: replace YOUR_VIDEO_ID (the part after v= in the video URL) in both places below -->
-[![Watch the Arcive demo on YouTube](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
+[![Watch the Arcive demo on YouTube](https://img.youtube.com/vi/=-M5GomP-JFs/maxresdefault.jpg)](https://www.youtube.com/watch?v==-M5GomP-JFs)
 
 ---
 
