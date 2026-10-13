@@ -136,7 +136,7 @@ export default function AnalyticsDashboard({ receipts, currentAddress }: Props) 
                     color: "#111111",
                     fontWeight: "bold",
                   }}
-                  formatter={(value: number) => [`${value.toFixed(2)} USDC`, "Amount"]}
+                  formatter={(value: any) => [`${Number(value || 0).toFixed(2)} USDC`, "Amount"]}
                 />
                 <Legend
                   layout="vertical"

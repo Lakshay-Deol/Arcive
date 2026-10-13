@@ -2,9 +2,6 @@
 
 > **Permanent, verifiable on-chain receipts and NFT proofs for every USDC payment on Arc Mainnet.**
 
-🔗 **Live Production dApp**: [https://arc-receipts-main.vercel.app](https://arc-receipts-main.vercel.app)  
-📜 **Verified Arc Mainnet Contract**: [`0x4664cf917157735081c3ba095733a85ade5beb0f`](https://explorer.arc.io/address/0x4664cf917157735081c3ba095733a85ade5beb0f)
-
 Arcive gives every USDC transaction on Arc Mainnet a permanent on-chain receipt (amount, counterparty, category, reference note), an interactive filterable history ledger, mintable on-chain SVG NFT certificates, and an accountant-ready CSV export in one click.
 
 ---
