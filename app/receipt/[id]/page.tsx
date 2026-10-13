@@ -10,6 +10,10 @@ import {
   ARC_RECEIPTS_ADDRESS,
   ARC_RECEIPTS_ABI,
 } from "../../../lib/arcReceiptsContract";
+import {
+  ARCIVE_NFT_ADDRESS,
+  ARCIVE_NFT_ABI,
+} from "../../../lib/arciveNftContract";
 
 const categoryLabels: Record<number, string> = {
   0: "Salary",
@@ -52,15 +56,31 @@ export default function ReceiptPage() {
   const [isFetchingHash, setIsFetchingHash] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const { data, isLoading, error } = useReadContract({
-    address: ARC_RECEIPTS_ADDRESS,
-    abi: ARC_RECEIPTS_ABI,
+  const targetAddress = ARCIVE_NFT_ADDRESS || ARC_RECEIPTS_ADDRESS;
+
+  const { data: nftData, isLoading: isNftLoading, error: nftError } = useReadContract({
+    address: targetAddress,
+    abi: ARCIVE_NFT_ABI,
     functionName: "getReceipt",
     args: [receiptId],
     query: {
       enabled: !!id,
     },
   } as any);
+
+  const { data: legacyData, isLoading: isLegacyLoading, error: legacyError } = useReadContract({
+    address: targetAddress,
+    abi: ARC_RECEIPTS_ABI,
+    functionName: "getReceipt",
+    args: [receiptId],
+    query: {
+      enabled: !!id && !!nftError,
+    },
+  } as any);
+
+  const data = nftData || legacyData;
+  const isLoading = isNftLoading || (!!nftError && isLegacyLoading);
+  const error = !data && (nftError && legacyError);
 
   useEffect(() => {
     if (txHash || !receiptId || !publicClient) return;
@@ -71,7 +91,7 @@ export default function ReceiptPage() {
       try {
         try {
           const logs = await publicClient.getLogs({
-            address: ARC_RECEIPTS_ADDRESS,
+            address: targetAddress,
             event: parseAbiItem(
               "event Paid(uint256 indexed id, address indexed payer, address indexed payee, uint256 amount, string category, string note)"
             ),
@@ -88,7 +108,7 @@ export default function ReceiptPage() {
         }
 
         const logs = await publicClient.getLogs({
-          address: ARC_RECEIPTS_ADDRESS,
+          address: targetAddress,
           event: parseAbiItem(
             "event ReceiptCreated(uint256 indexed id, address indexed from, address indexed to, address token, uint256 amount, string corridor, uint256 timestamp)"
           ),

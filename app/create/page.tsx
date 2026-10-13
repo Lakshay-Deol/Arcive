@@ -213,62 +213,122 @@ function CreateReceiptContent() {
       setLastMyReceiptLoading(true);
       setLastMyReceiptError(null);
       try {
-        const nextId = (await client.readContract({
-          address: ARC_RECEIPTS_ADDRESS,
-          abi: ARC_RECEIPTS_ABI,
-          functionName: "nextReceiptId",
-          args: [],
-        })) as bigint;
-
-        if (nextId <= BigInt(1)) {
+        let found: Receipt | null = null;
+        const targetContract = ARCIVE_NFT_ADDRESS || ARC_RECEIPTS_ADDRESS;
+        if (!targetContract) {
           if (!cancelled) setLastMyReceipt(null);
-          setLastMyReceiptLoading(false);
           return;
         }
 
-        const lastExistingId = nextId - BigInt(1);
-        const lastId = Number(lastExistingId);
-        const maxToFetch = 50;
-        const startId = Math.max(1, lastId - maxToFetch + 1);
-        const addrLower = currentAddress.toLowerCase();
-        let found: Receipt | null = null;
+        // 1. Try ArciveNFT standard first (O(1) counterparty indexers)
+        try {
+          const [payerIds, payeeIds] = await Promise.all([
+            client.readContract({
+              address: targetContract,
+              abi: ARCIVE_NFT_ABI,
+              functionName: "idsByPayer",
+              args: [currentAddress],
+            }) as Promise<bigint[]>,
+            client.readContract({
+              address: targetContract,
+              abi: ARCIVE_NFT_ABI,
+              functionName: "idsByPayee",
+              args: [currentAddress],
+            }) as Promise<bigint[]>,
+          ]);
 
-        for (let id = lastId; id >= startId; id--) {
-          const data: any = await client.readContract({
-            address: ARC_RECEIPTS_ADDRESS,
-            abi: ARC_RECEIPTS_ABI,
-            functionName: "getReceipt",
-            args: [BigInt(id)],
-          });
+          const allIds = [...payerIds, ...payeeIds].sort((a, b) => (b > a ? 1 : b < a ? -1 : 0));
 
-          const meta = data.meta || data[5];
-          const categoryVal = typeof meta.category !== 'undefined' ? Number(meta.category) : Number(meta[0]);
+          if (allIds.length > 0) {
+            const latestId = allIds[0];
+            const data: any = await client.readContract({
+              address: targetContract,
+              abi: ARCIVE_NFT_ABI,
+              functionName: "getReceipt",
+              args: [latestId],
+            });
 
-          const r: Receipt = {
-            id: data.id ?? data[0],
-            from: data.from ?? data[1],
-            to: data.to ?? data[2],
-            amount: data.amount ?? data[4],
-            token: data.token ?? data[3],
-            category: categoryVal,
-            reason: meta.reason ?? meta[1],
-            sourceCurrency: meta.sourceCurrency ?? meta[2],
-            destinationCurrency: meta.destinationCurrency ?? meta[3],
-            corridor: meta.corridor ?? meta[4],
-            timestamp: data.timestamp ?? data[6],
-          };
+            const categoryVal =
+              typeof data.category === "string"
+                ? Object.values(categoryLabels).indexOf(data.category) !== -1
+                  ? Object.values(categoryLabels).indexOf(data.category)
+                  : 6
+                : Number(data.category ?? 6);
 
-          const fromLower = r.from.toLowerCase();
-          const toLower = r.to.toLowerCase();
-          if (fromLower === addrLower || toLower === addrLower) {
-            found = r;
-            break;
+            found = {
+              id: latestId,
+              from: data.payer ?? data.from ?? "",
+              to: data.payee ?? data.to ?? "",
+              amount: data.amount ?? BigInt(0),
+              token: "0x3600000000000000000000000000000000000000",
+              category: categoryVal,
+              reason: data.note ?? data.reason ?? "Arcive Payment",
+              sourceCurrency: "USDC",
+              destinationCurrency: "USDC",
+              corridor: "USDC-USDC",
+              timestamp: BigInt(data.timestamp ?? 0),
+            };
+          }
+        } catch {
+          // 2. Fallback to legacy ArcReceipts contract if applicable and different
+          if (targetContract && targetContract !== ARCIVE_NFT_ADDRESS) {
+            try {
+              const nextId = (await client.readContract({
+                address: targetContract,
+                abi: ARC_RECEIPTS_ABI,
+                functionName: "nextReceiptId",
+                args: [],
+              })) as bigint;
+
+            if (nextId > BigInt(1)) {
+              const lastId = Number(nextId - BigInt(1));
+              const maxToFetch = 30;
+              const startId = Math.max(1, lastId - maxToFetch + 1);
+              const addrLower = currentAddress.toLowerCase();
+
+              for (let id = lastId; id >= startId; id--) {
+                const data: any = await client.readContract({
+                  address: targetContract,
+                  abi: ARC_RECEIPTS_ABI,
+                  functionName: "getReceipt",
+                  args: [BigInt(id)],
+                });
+
+                const meta = data.meta || data[5];
+                const categoryVal = typeof meta.category !== "undefined" ? Number(meta.category) : Number(meta[0]);
+
+                const r: Receipt = {
+                  id: data.id ?? data[0],
+                  from: data.from ?? data[1],
+                  to: data.to ?? data[2],
+                  amount: data.amount ?? data[4],
+                  token: data.token ?? data[3],
+                  category: categoryVal,
+                  reason: meta.reason ?? meta[1],
+                  sourceCurrency: meta.sourceCurrency ?? meta[2],
+                  destinationCurrency: meta.destinationCurrency ?? meta[3],
+                  corridor: meta.corridor ?? meta[4],
+                  timestamp: data.timestamp ?? data[6],
+                };
+
+                const fromLower = r.from.toLowerCase();
+                const toLower = r.to.toLowerCase();
+                if (fromLower === addrLower || toLower === addrLower) {
+                  found = r;
+                  break;
+                }
+              }
+            }
+          } catch {
+            found = null;
           }
         }
+      }
+
         if (!cancelled) setLastMyReceipt(found);
       } catch (e: any) {
-        console.error("Error loading receipt:", e);
-        if (!cancelled) setLastMyReceiptError(e?.message ?? "Failed to load last receipt");
+        console.warn("Notice: No recent receipts found for wallet:", e);
+        if (!cancelled) setLastMyReceipt(null);
       } finally {
         if (!cancelled) setLastMyReceiptLoading(false);
       }
@@ -447,14 +507,18 @@ function CreateReceiptContent() {
         })) as bigint;
         nextIdVal = nextId.toString();
       } catch {
-        try {
-          const nextId = (await publicClient.readContract({
-            address: ARC_RECEIPTS_ADDRESS,
-            abi: ARC_RECEIPTS_ABI,
-            functionName: "nextReceiptId",
-          })) as bigint;
-          nextIdVal = nextId.toString();
-        } catch {
+        if (ARC_RECEIPTS_ADDRESS && ARC_RECEIPTS_ADDRESS !== ARCIVE_NFT_ADDRESS) {
+          try {
+            const nextId = (await publicClient.readContract({
+              address: ARC_RECEIPTS_ADDRESS,
+              abi: ARC_RECEIPTS_ABI,
+              functionName: "nextReceiptId",
+            })) as bigint;
+            nextIdVal = nextId.toString();
+          } catch {
+            nextIdVal = "1";
+          }
+        } else {
           nextIdVal = "1";
         }
       }

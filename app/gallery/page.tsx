@@ -72,15 +72,19 @@ export default function GalleryPage() {
           total = Number(totalBig);
         } catch {
           isNftStandard = false;
-          // Fallback to nextReceiptId from legacy contract
-          try {
-            const nextId = (await publicClient!.readContract({
-              address: contractAddress,
-              abi: ARC_RECEIPTS_ABI,
-              functionName: "nextReceiptId",
-            })) as bigint;
-            total = Math.max(0, Number(nextId) - 1);
-          } catch {
+          // Fallback to nextReceiptId from legacy contract only if different
+          if (contractAddress && contractAddress !== ARCIVE_NFT_ADDRESS) {
+            try {
+              const nextId = (await publicClient!.readContract({
+                address: contractAddress,
+                abi: ARC_RECEIPTS_ABI,
+                functionName: "nextReceiptId",
+              })) as bigint;
+              total = Math.max(0, Number(nextId) - 1);
+            } catch {
+              total = 0;
+            }
+          } else {
             total = 0;
           }
         }
